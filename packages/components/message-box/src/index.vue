@@ -165,11 +165,9 @@ import {
   useDraggable,
   useId,
   useLockscreen,
-  useRestoreActive,
   useSameTarget,
 } from '@element-plus/hooks'
 import ElInput from '@element-plus/components/input'
-import { useFormSize } from '@element-plus/components/form'
 import { ElOverlay } from '@element-plus/components/overlay'
 import {
   TypeComponents,
@@ -249,7 +247,15 @@ export default defineComponent({
   emits: ['vanish', 'action'],
   setup(props, { emit }) {
     // const popup = usePopup(props, doClose)
-    const { locale, zIndex, ns } = useGlobalComponentSettings('message-box')
+    const {
+      locale,
+      zIndex,
+      ns,
+      size: btnSize,
+    } = useGlobalComponentSettings(
+      'message-box',
+      computed(() => props.buttonSize)
+    )
 
     const { t } = locale
     const { nextZIndex } = zIndex
@@ -303,11 +309,6 @@ export default defineComponent({
 
     const contentId = useId()
     const inputId = useId()
-
-    const btnSize = useFormSize(
-      computed(() => props.buttonSize),
-      { prop: true, form: true, formItem: true }
-    )
 
     const iconComponent = computed(
       () => state.icon || TypeComponentsMap[state.type] || ''
@@ -471,9 +472,6 @@ export default defineComponent({
     if (props.lockScroll) {
       useLockscreen(visible)
     }
-
-    // restore to prev active element.
-    useRestoreActive(visible)
 
     return {
       ...toRefs(state),

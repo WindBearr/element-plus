@@ -1,4 +1,4 @@
-import { computed, inject, ref, unref } from 'vue'
+import { computed, getCurrentInstance, inject, ref, unref } from 'vue'
 
 import type { InjectionKey, Ref } from 'vue'
 
@@ -26,11 +26,16 @@ const _bem = (
 }
 
 export const namespaceContextKey: InjectionKey<Ref<string | undefined>> =
-  Symbol('localeContextKey')
+  Symbol('namespaceContextKey')
 
-export const useGetDerivedNamespace = (namespaceOverrides?: Ref<string>) => {
+export const useGetDerivedNamespace = (
+  namespaceOverrides?: Ref<string | undefined>
+) => {
   const derivedNamespace =
-    namespaceOverrides || inject(namespaceContextKey, ref(defaultNamespace))
+    namespaceOverrides ||
+    (getCurrentInstance()
+      ? inject(namespaceContextKey, ref(defaultNamespace))
+      : ref(defaultNamespace))
   const namespace = computed(() => {
     return unref(derivedNamespace) || defaultNamespace
   })
@@ -39,7 +44,7 @@ export const useGetDerivedNamespace = (namespaceOverrides?: Ref<string>) => {
 
 export const useNamespace = (
   block: string,
-  namespaceOverrides?: Ref<string>
+  namespaceOverrides?: Ref<string | undefined>
 ) => {
   const namespace = useGetDerivedNamespace(namespaceOverrides)
   const b = (blockSuffix = '') =>

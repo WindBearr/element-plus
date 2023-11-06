@@ -92,7 +92,8 @@ const CellRenderer: FunctionalComponent<CellRendererProps> = (
     column.align === Alignment.RIGHT && ns.is('align-right'),
   ]
 
-  const expandable = rowIndex >= 0 && column.key === expandColumnKey
+  const expandable =
+    rowIndex >= 0 && expandColumnKey && column.key === expandColumnKey
   const expanded = rowIndex >= 0 && expandedRowKeys.includes(rowData[rowKey])
 
   let IconOrPlaceholder: VNode | undefined
@@ -122,7 +123,7 @@ const CellRenderer: FunctionalComponent<CellRendererProps> = (
   }
 
   return (
-    <div class={kls} style={cellStyle} {...extraCellProps}>
+    <div class={kls} style={cellStyle} {...extraCellProps} role="cell">
       {IconOrPlaceholder}
       {Cell}
     </div>
